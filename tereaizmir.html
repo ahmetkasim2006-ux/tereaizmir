@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEREA Profesyonel Katalog + Admin Paneli</title>
+  <style>
+    :root {
+      --bg: #0b0b0d;
+      --card: #151519;
+      --card-2: #1d1d23;
+      --text: #f7f7f8;
+      --muted: #a6a6ad;
+      --gold: #d6a84f;
+      --gold-2: #f2ca74;
+      --green: #25d366;
+      --red: #ff5c5c;
+      --blue: #69a7ff;
+      --border: rgba(255,255,255,.09);
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #23232b 0, #0b0b0d 42%, #050506 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea, select { font: inherit; }
+
+    .top-warning {
+      background: #111;
+      color: #ddd;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 9px 14px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(11, 11, 13, .76);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 74px;
+      gap: 18px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: .8px;
+    }
+
+    .logo-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--gold), #7d5820);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 22px rgba(214,168,79,.35);
+      color: #111;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-links > li { position: relative; }
+
+    .nav-links a,
+    .drop-btn,
+    .admin-open-btn {
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      padding: 11px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .admin-open-btn {
+      background: rgba(214,168,79,.13);
+      border: 1px solid rgba(214,168,79,.28);
+      color: var(--gold-2);
+      font-weight: 800;
+    }
+
+    .nav-links a:hover,
+    .drop-btn:hover,
+    .admin-open-btn:hover { background: rgba(255,255,255,.08); }
+
+    .dropdown {
+      position: absolute;
+      top: 43px;
+      left: 0;
+      width: 230px;
+      background: rgba(20,20,24,.98);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 8px;
+      display: none;
+    }
+
+    .dropdown a { display: block; border-radius: 12px; color: #ececf0; }
+    .has-dropdown:hover .dropdown { display: block; }
+
+    .mobile-btn {
+      display: none;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 20px;
+    }
+
+    .hero {
+      width: min(1180px, calc(100% - 32px));
+      margin: 44px auto 0;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-card {
+      background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border: 1px solid var(--border);
+      border-radius: 34px;
+      padding: clamp(26px, 5vw, 56px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -90px;
+      top: -90px;
+      background: rgba(214,168,79,.18);
+      filter: blur(12px);
+      border-radius: 50%;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gold-2);
+      background: rgba(214,168,79,.12);
+      border: 1px solid rgba(214,168,79,.28);
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(36px, 7vw, 72px);
+      line-height: .95;
+      margin-bottom: 18px;
+      letter-spacing: -2px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+      max-width: 610px;
+    }
+
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn-gold { background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #15100a; }
+    .btn-outline { border-color: var(--border); background: rgba(255,255,255,.05); color: var(--text); }
+    .btn-red { background: rgba(255,92,92,.14); color: #ffc3c3; border-color: rgba(255,92,92,.24); }
+    .btn-blue { background: rgba(105,167,255,.14); color: #cfe2ff; border-color: rgba(105,167,255,.24); }
+    .btn-small { padding: 9px 12px; font-size: 13px; }
+
+    .visual {
+      min-height: 440px;
+      border-radius: 34px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(145deg, rgba(214,168,79,.12), transparent),
+        linear-gradient(180deg, #19191f, #09090b);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .hero-product-stack {
+      display: grid;
+      grid-template-columns: repeat(3, 92px);
+      gap: 14px;
+      align-items: end;
+      justify-content: center;
+    }
+
+    .pack {
+      height: 210px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #f4f4f4, #6f6f76);
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 25px 60px rgba(0,0,0,.4);
+      display: grid;
+      place-items: center;
+      color: #111;
+      font-weight: 900;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .pack:nth-child(2) { height: 260px; background: linear-gradient(145deg, #f7e0b5, #8a5d25); }
+    .pack:nth-child(3) { height: 225px; background: linear-gradient(145deg, #ccecf1, #2f8792); }
+
+    .section {
+      width: min(1180px, calc(100% - 32px));
+      margin: 74px auto 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .section h2 { font-size: clamp(28px, 4vw, 44px); letter-spacing: -1px; }
+    .section-head p { color: var(--muted); max-width: 560px; line-height: 1.6; }
+
+    .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+
+    .filter-btn {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: var(--gold);
+      color: #111;
+      border-color: var(--gold);
+      font-weight: 800;
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+
+    .product-card {
+      background: linear-gradient(180deg, var(--card-2), var(--card));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.2);
+      transition: .2s ease;
+    }
+
+    .product-card:hover { transform: translateY(-6px); border-color: rgba(214,168,79,.45); }
+
+    .thumb {
+      height: 210px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(214,168,79,.25), transparent 42%),
+        linear-gradient(145deg, #2a2a32, #101014);
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 28px rgba(0,0,0,.42));
+    }
+
+    .fallback-pack {
+      width: 96px;
+      height: 150px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #f6f6f6, #85858d);
+      box-shadow: 0 18px 40px rgba(0,0,0,.32);
+      display: grid;
+      place-items: center;
+      color: #111;
+      font-weight: 900;
+      text-align: center;
+      font-size: 13px;
+      padding: 8px;
+    }
+
+    .content { padding: 18px; }
+    .content small { color: var(--gold-2); font-weight: 700; }
+    .content h3 { margin: 8px 0 10px; font-size: 19px; }
+    .content p { color: var(--muted); font-size: 14px; line-height: 1.55; min-height: 66px; }
+
+    .specs { display: grid; gap: 8px; margin-top: 14px; color: #d8d8df; font-size: 13px; }
+    .specs span { background: rgba(255,255,255,.055); border: 1px solid var(--border); border-radius: 12px; padding: 9px 10px; }
+    .card-actions { margin-top: 16px; display: flex; gap: 10px; }
+
+    .mini-whatsapp {
+      width: 100%;
+      background: var(--green);
+      color: #04150a;
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .notice-box {
+      margin-top: 26px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .contact { display: grid; grid-template-columns: .9fr 1.1fr; gap: 22px; margin-bottom: 60px; }
+
+    .info-box,
+    .form-box {
+      background: rgba(255,255,255,.055);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .info-box p { color: var(--muted); line-height: 1.7; margin-top: 10px; }
+    .contact-list { margin-top: 22px; display: grid; gap: 12px; }
+    .contact-list div { background: rgba(255,255,255,.055); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }
+    form { display: grid; gap: 12px; }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      background: #0f0f13;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      outline: none;
+    }
+
+    textarea { min-height: 120px; resize: vertical; }
+    label { color: #d8d8df; font-size: 13px; font-weight: 800; }
+
+    .floating-whatsapp {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 60;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--green);
+      color: #08160c;
+      font-weight: 900;
+      font-size: 24px;
+      box-shadow: 0 14px 40px rgba(37,211,102,.32);
+      cursor: pointer;
+    }
+
+    .age-modal,
+    .admin-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,.86);
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .admin-modal { display: none; z-index: 120; }
+    .admin-modal.show { display: grid; }
+
+    .age-card {
+      width: min(500px, 100%);
+      background: #141418;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .age-card h2 { margin-bottom: 12px; }
+    .age-card p { color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+    .age-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    .admin-shell {
+      width: min(1180px, 100%);
+      max-height: min(92vh, 920px);
+      background: #101014;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.035);
+    }
+
+    .admin-header h2 { font-size: 22px; }
+    .admin-body { overflow: auto; padding: 18px; }
+
+    .login-box {
+      width: min(460px, 100%);
+      background: #141418;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 14px;
+    }
+
+    .login-box p { color: var(--muted); line-height: 1.55; font-size: 14px; }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 18px;
+    }
+
+    .admin-card {
+      background: rgba(255,255,255,.045);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .admin-card h3 { margin-bottom: 14px; }
+
+    .form-row { display: grid; gap: 8px; margin-bottom: 12px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .image-preview {
+      min-height: 170px;
+      border: 1px dashed rgba(255,255,255,.2);
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px;
+      background: rgba(0,0,0,.18);
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: 170px;
+      object-fit: contain;
+    }
+
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,.045);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .stat-box strong { display: block; font-size: 26px; color: var(--gold-2); }
+    .stat-box span { color: var(--muted); font-size: 13px; }
+
+    .admin-tools {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .product-table-wrap { overflow-x: auto; }
+
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    .product-table th,
+    .product-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 10px;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    .product-table th { color: var(--gold-2); font-size: 13px; }
+    .product-table td { color: #e9e9ee; }
+
+    .admin-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: #222;
+      object-fit: contain;
+      border: 1px solid var(--border);
+    }
+
+    .table-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .category-manager {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .category-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .category-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 10px;
+      color: #e8e8ee;
+      font-size: 13px;
+    }
+
+    .chip-x {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 0;
+      background: rgba(255,92,92,.16);
+      color: #ffc3c3;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(20px);
+      background: #151519;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 200;
+      transition: .2s ease;
+      text-align: center;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 16px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 1020px) {
+      .admin-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 960px) {
+      .hero, .contact { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .visual { min-height: 340px; }
+    }
+
+    @media (max-width: 720px) {
+      .mobile-btn { display: block; }
+
+      .nav-links {
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        top: 84px;
+        background: rgba(18,18,22,.98);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 12px;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav-links.show { display: flex; }
+      .dropdown { position: static; width: 100%; display: block; box-shadow: none; background: rgba(255,255,255,.04); margin-top: 6px; }
+      .grid { grid-template-columns: 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+      .hero { margin-top: 24px; }
+      .hero-product-stack { grid-template-columns: repeat(3, 74px); }
+      .pack { height: 170px; font-size: 12px; }
+      .pack:nth-child(2) { height: 210px; }
+      .pack:nth-child(3) { height: 180px; }
+      .admin-header { align-items: start; flex-direction: column; }
+      .admin-stats { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-warning">
+    18+ bilgilendirme kataloğu. Nikotin/tütün ürünleri bağımlılık riski taşır. Satış, reklam ve kullanım koşulları için yerel mevzuatı kontrol edin.
+  </div>
+
+  <header class="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="#home">
+        <span class="logo-mark">T</span>
+        <span>TEREA KATALOG</span>
+      </a>
+
+      <button class="mobile-btn" id="menuBtn">☰</button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home">Ana Sayfa</a></li>
+        <li class="has-dropdown">
+          <button class="drop-btn">Kategoriler ▾</button>
+          <div class="dropdown" id="categoryDropdown"></div>
+        </li>
+        <li><a href="#products">Ürünler</a></li>
+        <li><a href="#contact">İletişim</a></li>
+        <li><button class="admin-open-btn" id="openAdminBtn">Admin Paneli</button></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-card">
+        <span class="badge">🔒 18+ yaş kontrollü ürün kataloğu</span>
+        <h1>TEREA ürünleri için profesyonel yönetilebilir katalog.</h1>
+        <p>
+          Ürünleri artık koddan tek tek değiştirmek zorunda değilsin. Admin panelinden kategori ekleyebilir, ürün oluşturabilir ve ürün görselini bilgisayarından seçebilirsin. Bilgiler tarayıcıda kaydedilir.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="#products">Kataloğu Gör</a>
+          <button class="btn btn-outline" onclick="openWhatsApp('Merhaba, TEREA kataloğu hakkında bilgi almak istiyorum.')">Bilgi Talep Et</button>
+        </div>
+      </div>
+
+      <div class="visual">
+        <div class="hero-product-stack">
+          <div class="pack">TEREA<br>CLASSIC</div>
+          <div class="pack">ADMIN<br>PANEL</div>
+          <div class="pack">TEREA<br>FRESH</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="products">
+      <div class="section-head">
+        <div>
+          <h2>TEREA Ürün Kataloğu</h2>
+          <p>Ürünler admin panelinden yönetilir. Kategori seçerek katalog görünümünü filtreleyebilirsin.</p>
+        </div>
+      </div>
+
+      <div class="filters" id="filterBar"></div>
+      <div class="grid" id="productGrid"></div>
+
+      <div class="notice-box">
+        Not: Bu şablon tek dosyalık demo sistemidir. Ürün ve görseller <strong>localStorage</strong> içinde saklanır. Gerçek yayına alınacaksa Firebase/Supabase gibi veritabanı ve depolama sistemi kullanılması daha doğru olur.
+      </div>
+    </section>
+
+    <section class="section contact" id="contact">
+      <div class="info-box">
+        <span class="badge">📞 Bilgi Talebi</span>
+        <h2>Bize Ulaşın</h2>
+        <p>
+          Kullanıcılar formu doldurunca WhatsApp üzerinde hazır bilgi talebi mesajı açılır. Numaranı JavaScript bölümündeki <strong>WHATSAPP_NUMBER</strong> alanına yaz.
+        </p>
+        <div class="contact-list">
+          <div><strong>Telefon:</strong> +90 5XX XXX XX XX</div>
+          <div><strong>E-posta:</strong> info@siteadi.com</div>
+          <div><strong>Bölge:</strong> İzmir / Türkiye</div>
+        </div>
+      </div>
+
+      <div class="form-box">
+        <form id="contactForm">
+          <input type="text" id="name" placeholder="Adınız" required />
+          <input type="tel" id="phone" placeholder="Telefon numaranız" required />
+          <select id="topic">
+            <option value="TEREA ürün bilgisi">TEREA ürün bilgisi</option>
+            <option value="Uyumluluk bilgisi">Uyumluluk bilgisi</option>
+            <option value="Genel soru">Genel soru</option>
+          </select>
+          <textarea id="message" placeholder="Mesajınız"></textarea>
+          <button class="btn btn-gold" type="submit">WhatsApp'ta Bilgi Talebi Oluştur</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <button class="floating-whatsapp" onclick="openWhatsApp('Merhaba, TEREA kataloğu hakkında bilgi almak istiyorum.')">☏</button>
+
+  <div class="age-modal" id="ageModal">
+    <div class="age-card">
+      <h2>18+ Yaş Doğrulaması</h2>
+      <p>Bu sayfa yalnızca yasal yaş şartlarını karşılayan ziyaretçiler için hazırlanmıştır. Devam ederek gerekli yaşta olduğunuzu onaylarsınız.</p>
+      <div class="age-actions">
+        <button class="btn btn-gold" id="ageYes">18+ Yaşındayım</button>
+        <button class="btn btn-outline" id="ageNo">Çıkış Yap</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-modal" id="adminModal">
+    <div class="login-box" id="adminLoginBox">
+      <h2>Admin Girişi</h2>
+      <p>Demo admin şifresi: <strong>123456</strong>. Yayına alırken bu şifre sistemini sunucu taraflı yapmalısın.</p>
+      <input type="password" id="adminPassword" placeholder="Admin şifresi" />
+      <button class="btn btn-gold" id="adminLoginBtn">Giriş Yap</button>
+      <button class="btn btn-outline" id="adminCloseLoginBtn">Kapat</button>
+    </div>
+
+    <div class="admin-shell" id="adminPanel" style="display:none;">
+      <div class="admin-header">
+        <div>
+          <h2>Admin Paneli</h2>
+          <p style="color:var(--muted);font-size:14px;margin-top:4px;">Ürün, kategori ve bilgisayardan görsel yükleme yönetimi</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-small" id="adminExportBtn">Verileri Dışa Aktar</button>
+          <button class="btn btn-red btn-small" id="adminLogoutBtn">Çıkış</button>
+          <button class="btn btn-outline btn-small" id="adminCloseBtn">Kapat</button>
+        </div>
+      </div>
+
+      <div class="admin-body">
+        <div class="admin-stats">
+          <div class="stat-box"><strong id="statProducts">0</strong><span>Toplam ürün</span></div>
+          <div class="stat-box"><strong id="statCategories">0</strong><span>Kategori</span></div>
+          <div class="stat-box"><strong id="statImages">0</strong><span>Görselli ürün</span></div>
+        </div>
+
+        <div class="admin-grid">
+          <div class="admin-card">
+            <h3 id="formTitle">Yeni Ürün Ekle</h3>
+
+            <div class="category-manager">
+              <label>Kategori Yönetimi</label>
+              <div class="two-col">
+                <input type="text" id="newCategoryName" placeholder="Yeni kategori adı" />
+                <button class="btn btn-blue" id="addCategoryBtn">Kategori Ekle</button>
+              </div>
+              <div class="category-list" id="adminCategoryList"></div>
+            </div>
+
+            <form id="productForm">
+              <input type="hidden" id="editingId" />
+
+              <div class="form-row">
+                <label>Ürün Adı</label>
+                <input type="text" id="productTitle" placeholder="Örn: TEREA Amber" required />
+              </div>
+
+              <div class="form-row">
+                <label>Kategori</label>
+                <select id="productCategory" required></select>
+              </div>
+
+              <div class="form-row">
+                <label>Ürün Açıklaması</label>
+                <textarea id="productDesc" placeholder="Ürün açıklaması yaz" required></textarea>
+              </div>
+
+              <div class="two-col">
+                <div class="form-row">
+                  <label>Uyumluluk Bilgisi</label>
+                  <input type="text" id="productCompatibility" placeholder="IQOS ILUMA serisiyle uyumlu" />
+                </div>
+                <div class="form-row">
+                  <label>Paket / Not</label>
+                  <input type="text" id="productPackage" placeholder="Paket bilgisi" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <label>Ürün Görseli — bilgisayardan seç</label>
+                <input type="file" id="productImage" accept="image/*" />
+                <div class="image-preview" id="imagePreview">Henüz görsel seçilmedi</div>
+              </div>
+
+              <button class="btn btn-gold" type="submit" id="saveProductBtn">Ürünü Kaydet</button>
+              <button class="btn btn-outline" type="button" id="resetFormBtn">Formu Temizle</button>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h3>Ürün Listesi</h3>
+            <div class="admin-tools">
+              <input type="search" id="adminSearch" placeholder="Ürün ara..." style="max-width:280px;" />
+              <select id="adminFilter" style="max-width:220px;"></select>
+              <button class="btn btn-red btn-small" id="clearAllProductsBtn">Tüm Ürünleri Sil</button>
+            </div>
+            <div class="product-table-wrap">
+              <table class="product-table">
+                <thead>
+                  <tr>
+                    <th>Görsel</th>
+                    <th>Ürün</th>
+                    <th>Kategori</th>
+                    <th>Uyumluluk</th>
+                    <th>İşlem</th>
+                  </tr>
+                </thead>
+                <tbody id="adminProductTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer>
+    © 2026 TEREA Katalog. Bu sayfa örnek bilgilendirme/katalog şablonudur.
+  </footer>
+
+  <script>
+    const WHATSAPP_NUMBER = "905XXXXXXXXX"; // Buraya kendi WhatsApp numaranı yaz. Örnek: 905301112233
+    const ADMIN_PASSWORD = "123456"; // Demo şifre. Yayında bunu backend ile korumalısın.
+    const STORAGE_PRODUCTS = "terea_products_admin_v1";
+    const STORAGE_CATEGORIES = "terea_categories_admin_v1";
+    const STORAGE_ADMIN = "terea_admin_logged_v1";
+
+    const defaultCategories = [
+      { id: "classic", name: "Classic Seri" },
+      { id: "fresh", name: "Fresh / Menthol" },
+      { id: "aroma", name: "Aromalı Seri" }
+    ];
+
+    const defaultProducts = [
+      {
+        id: createId(),
+        title: "TEREA Amber",
+        category: "classic",
+        image: "",
+        desc: "Classic kategori için örnek ürün kartı. Açıklama alanını admin panelinden değiştirebilirsin.",
+        compatibility: "IQOS ILUMA serisiyle uyumlu",
+        packageInfo: "Paket bilgisi alanı"
+      },
+      {
+        id: createId(),
+        title: "TEREA Sienna",
+        category: "classic",
+        image: "",
+        desc: "Katalogda classic seri içinde gösterilen örnek TEREA kartı.",
+        compatibility: "IQOS ILUMA serisiyle uyumlu",
+        packageInfo: "Paket bilgisi alanı"
+      },
+      {
+        id: createId(),
+        title: "TEREA Turquoise",
+        category: "fresh",
+        image: "",
+        desc: "Fresh / menthol kategorisi için örnek kart yapısı.",
+        compatibility: "IQOS ILUMA serisiyle uyumlu",
+        packageInfo: "Paket bilgisi alanı"
+      },
+      {
+        id: createId(),
+        title: "TEREA Purple Wave",
+        category: "aroma",
+        image: "",
+        desc: "Aromalı seri için örnek ürün açıklaması. Metni dilediğin gibi düzenleyebilirsin.",
+        compatibility: "IQOS ILUMA serisiyle uyumlu",
+        packageInfo: "Paket bilgisi alanı"
+      }
+    ];
+
+    let categories = loadCategories();
+    let products = loadProducts();
+    let selectedImageData = "";
+    let currentFilter = "all";
+
+    const grid = document.getElementById("productGrid");
+    const filterBar = document.getElementById("filterBar");
+    const categoryDropdown = document.getElementById("categoryDropdown");
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+    const ageModal = document.getElementById("ageModal");
+    const adminModal = document.getElementById("adminModal");
+    const adminLoginBox = document.getElementById("adminLoginBox");
+    const adminPanel = document.getElementById("adminPanel");
+    const adminProductTable = document.getElementById("adminProductTable");
+    const adminCategoryList = document.getElementById("adminCategoryList");
+    const productCategory = document.getElementById("productCategory");
+    const adminFilter = document.getElementById("adminFilter");
+    const imagePreview = document.getElementById("imagePreview");
+    const toast = document.getElementById("toast");
+
+    function createId() {
+      return "id_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+    }
+
+    function slugify(text) {
+      return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/ğ/g, "g")
+        .replace(/ü/g, "u")
+        .replace(/ş/g, "s")
+        .replace(/ı/g, "i")
+        .replace(/ö/g, "o")
+        .replace(/ç/g, "c")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || createId();
+    }
+
+    function loadCategories() {
+      const saved = localStorage.getItem(STORAGE_CATEGORIES);
+      if (!saved) return [...defaultCategories];
+      try { return JSON.parse(saved); } catch { return [...defaultCategories]; }
+    }
+
+    function loadProducts() {
+      const saved = localStorage.getItem(STORAGE_PRODUCTS);
+      if (!saved) return [...defaultProducts];
+      try { return JSON.parse(saved); } catch { return [...defaultProducts]; }
+    }
+
+    function saveCategories() {
+      localStorage.setItem(STORAGE_CATEGORIES, JSON.stringify(categories));
+    }
+
+    function saveProducts() {
+      localStorage.setItem(STORAGE_PRODUCTS, JSON.stringify(products));
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function getCategoryName(id) {
+      return categories.find(c => c.id === id)?.name || "Kategori yok";
+    }
+
+    function renderFilters() {
+      filterBar.innerHTML = `
+        <button class="filter-btn ${currentFilter === "all" ? "active" : ""}" data-filter="all">Tümü</button>
+        ${categories.map(category => `
+          <button class="filter-btn ${currentFilter === category.id ? "active" : ""}" data-filter="${category.id}">${category.name}</button>
+        `).join("")}
+      `;
+
+      document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          currentFilter = btn.dataset.filter;
+          renderAll();
+        });
+      });
+    }
+
+    function renderDropdown() {
+      categoryDropdown.innerHTML = categories.map(category => `
+        <a href="#products" data-filter-link="${category.id}">${category.name}</a>
+      `).join("");
+
+      document.querySelectorAll("[data-filter-link]").forEach(link => {
+        link.addEventListener("click", () => {
+          currentFilter = link.dataset.filterLink;
+          navLinks.classList.remove("show");
+          renderAll();
+        });
+      });
+    }
+
+    function renderProducts() {
+      const filtered = currentFilter === "all" ? products : products.filter(p => p.category === currentFilter);
+
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div class="notice-box" style="grid-column:1/-1;margin-top:0;">
+            Bu kategoride henüz ürün yok. Admin panelinden yeni ürün ekleyebilirsin.
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(product => `
+        <article class="product-card">
+          <div class="thumb">
+            ${product.image ? `<img src="${product.image}" alt="${escapeHTML(product.title)}" />` : `<div class="fallback-pack">${escapeHTML(product.title)}</div>`}
+          </div>
+          <div class="content">
+            <small>${escapeHTML(getCategoryName(product.category))}</small>
+            <h3>${escapeHTML(product.title)}</h3>
+            <p>${escapeHTML(product.desc)}</p>
+            <div class="specs">
+              <span>${escapeHTML(product.compatibility || "Uyumluluk bilgisi eklenmedi")}</span>
+              <span>${escapeHTML(product.packageInfo || "Paket bilgisi eklenmedi")}</span>
+            </div>
+            <div class="card-actions">
+              <button class="mini-whatsapp" onclick="openWhatsApp('${escapeJS(product.title)} hakkında bilgi almak istiyorum.')">Bilgi Al</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderAdminCategories() {
+      adminCategoryList.innerHTML = categories.map(category => `
+        <span class="category-chip">
+          ${escapeHTML(category.name)}
+          <button class="chip-x" onclick="deleteCategory('${category.id}')">×</button>
+        </span>
+      `).join("");
+
+      productCategory.innerHTML = categories.map(category => `
+        <option value="${category.id}">${escapeHTML(category.name)}</option>
+      `).join("");
+
+      adminFilter.innerHTML = `
+        <option value="all">Tüm kategoriler</option>
+        ${categories.map(category => `<option value="${category.id}">${escapeHTML(category.name)}</option>`).join("")}
+      `;
+    }
+
+    function renderAdminProducts() {
+      const q = document.getElementById("adminSearch").value.trim().toLowerCase();
+      const f = adminFilter.value || "all";
+      const list = products.filter(product => {
+        const matchesSearch = !q || product.title.toLowerCase().includes(q) || product.desc.toLowerCase().includes(q);
+        const matchesCategory = f === "all" || product.category === f;
+        return matchesSearch && matchesCategory;
+      });
+
+      if (!list.length) {
+        adminProductTable.innerHTML = `<tr><td colspan="5" style="color:var(--muted);">Ürün bulunamadı.</td></tr>`;
+      } else {
+        adminProductTable.innerHTML = list.map(product => `
+          <tr>
+            <td>${product.image ? `<img class="admin-thumb" src="${product.image}" alt="${escapeHTML(product.title)}" />` : `<div class="admin-thumb"></div>`}</td>
+            <td><strong>${escapeHTML(product.title)}</strong><br><span style="color:var(--muted);font-size:12px;">${escapeHTML(product.desc).slice(0, 70)}...</span></td>
+            <td>${escapeHTML(getCategoryName(product.category))}</td>
+            <td>${escapeHTML(product.compatibility || "-")}</td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-blue btn-small" onclick="editProduct('${product.id}')">Düzenle</button>
+                <button class="btn btn-red btn-small" onclick="deleteProduct('${product.id}')">Sil</button>
+              </div>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      document.getElementById("statProducts").textContent = products.length;
+      document.getElementById("statCategories").textContent = categories.length;
+      document.getElementById("statImages").textContent = products.filter(p => p.image).length;
+    }
+
+    function renderAll() {
+      renderFilters();
+      renderDropdown();
+      renderProducts();
+      renderAdminCategories();
+      renderAdminProducts();
+    }
+
+    function escapeHTML(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeJS(value) {
+      return String(value || "").replace(/'/g, "\\'").replace(/"/g, "\\\"");
+    }
+
+    function openWhatsApp(text) {
+      const message = encodeURIComponent(text);
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, "_blank");
+    }
+
+    function resetProductForm() {
+      document.getElementById("editingId").value = "";
+      document.getElementById("productForm").reset();
+      document.getElementById("formTitle").textContent = "Yeni Ürün Ekle";
+      document.getElementById("saveProductBtn").textContent = "Ürünü Kaydet";
+      selectedImageData = "";
+      imagePreview.innerHTML = "Henüz görsel seçilmedi";
+    }
+
+    function editProduct(id) {
+      const product = products.find(p => p.id === id);
+      if (!product) return;
+
+      document.getElementById("editingId").value = product.id;
+      document.getElementById("productTitle").value = product.title;
+      document.getElementById("productCategory").value = product.category;
+      document.getElementById("productDesc").value = product.desc;
+      document.getElementById("productCompatibility").value = product.compatibility || "";
+      document.getElementById("productPackage").value = product.packageInfo || "";
+      selectedImageData = product.image || "";
+      imagePreview.innerHTML = product.image ? `<img src="${product.image}" alt="Önizleme" />` : "Bu üründe görsel yok";
+      document.getElementById("formTitle").textContent = "Ürünü Düzenle";
+      document.getElementById("saveProductBtn").textContent = "Değişiklikleri Kaydet";
+      showToast("Ürün düzenleme moduna alındı");
+    }
+
+    function deleteProduct(id) {
+      if (!confirm("Bu ürünü silmek istiyor musun?")) return;
+      products = products.filter(p => p.id !== id);
+      saveProducts();
+      resetProductForm();
+      renderAll();
+      showToast("Ürün silindi");
+    }
+
+    function deleteCategory(id) {
+      const used = products.some(p => p.category === id);
+      if (used) {
+        showToast("Bu kategoride ürün var. Önce ürünleri sil veya başka kategoriye taşı.");
+        return;
+      }
+      if (!confirm("Bu kategoriyi silmek istiyor musun?")) return;
+      categories = categories.filter(c => c.id !== id);
+      saveCategories();
+      if (currentFilter === id) currentFilter = "all";
+      renderAll();
+      showToast("Kategori silindi");
+    }
+
+    function openAdmin() {
+      adminModal.classList.add("show");
+      const logged = localStorage.getItem(STORAGE_ADMIN) === "1";
+      adminLoginBox.style.display = logged ? "none" : "grid";
+      adminPanel.style.display = logged ? "grid" : "none";
+      if (logged) renderAll();
+    }
+
+    document.getElementById("openAdminBtn").addEventListener("click", openAdmin);
+
+    document.getElementById("adminLoginBtn").addEventListener("click", () => {
+      const pass = document.getElementById("adminPassword").value;
+      if (pass !== ADMIN_PASSWORD) {
+        showToast("Şifre yanlış");
+        return;
+      }
+      localStorage.setItem(STORAGE_ADMIN, "1");
+      adminLoginBox.style.display = "none";
+      adminPanel.style.display = "grid";
+      renderAll();
+      showToast("Admin paneline giriş yapıldı");
+    });
+
+    document.getElementById("adminLogoutBtn").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_ADMIN);
+      adminPanel.style.display = "none";
+      adminLoginBox.style.display = "grid";
+      document.getElementById("adminPassword").value = "";
+      showToast("Çıkış yapıldı");
+    });
+
+    document.getElementById("adminCloseBtn").addEventListener("click", () => adminModal.classList.remove("show"));
+    document.getElementById("adminCloseLoginBtn").addEventListener("click", () => adminModal.classList.remove("show"));
+
+    document.getElementById("addCategoryBtn").addEventListener("click", () => {
+      const name = document.getElementById("newCategoryName").value.trim();
+      if (!name) return showToast("Kategori adı yaz");
+      const id = slugify(name);
+      if (categories.some(c => c.id === id || c.name.toLowerCase() === name.toLowerCase())) {
+        return showToast("Bu kategori zaten var");
+      }
+      categories.push({ id, name });
+      saveCategories();
+      document.getElementById("newCategoryName").value = "";
+      renderAll();
+      showToast("Kategori eklendi");
+    });
+
+    document.getElementById("productImage").addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        showToast("Lütfen görsel dosyası seç");
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        showToast("Görsel 2 MB altında olursa daha iyi çalışır");
+      }
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        selectedImageData = e.target.result;
+        imagePreview.innerHTML = `<img src="${selectedImageData}" alt="Önizleme" />`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("productForm").addEventListener("submit", e => {
+      e.preventDefault();
+
+      const editingId = document.getElementById("editingId").value;
+      const productData = {
+        id: editingId || createId(),
+        title: document.getElementById("productTitle").value.trim(),
+        category: document.getElementById("productCategory").value,
+        desc: document.getElementById("productDesc").value.trim(),
+        compatibility: document.getElementById("productCompatibility").value.trim(),
+        packageInfo: document.getElementById("productPackage").value.trim(),
+        image: selectedImageData
+      };
+
+      if (!productData.title || !productData.category || !productData.desc) {
+        showToast("Ürün adı, kategori ve açıklama zorunlu");
+        return;
+      }
+
+      if (editingId) {
+        products = products.map(p => p.id === editingId ? productData : p);
+        showToast("Ürün güncellendi");
+      } else {
+        products.unshift(productData);
+        showToast("Ürün eklendi");
+      }
+
+      saveProducts();
+      resetProductForm();
+      renderAll();
+    });
+
+    document.getElementById("resetFormBtn").addEventListener("click", resetProductForm);
+    document.getElementById("adminSearch").addEventListener("input", renderAdminProducts);
+    document.getElementById("adminFilter").addEventListener("change", renderAdminProducts);
+
+    document.getElementById("clearAllProductsBtn").addEventListener("click", () => {
+      if (!confirm("Tüm ürünler silinsin mi?")) return;
+      products = [];
+      saveProducts();
+      resetProductForm();
+      renderAll();
+      showToast("Tüm ürünler silindi");
+    });
+
+    document.getElementById("adminExportBtn").addEventListener("click", () => {
+      const data = JSON.stringify({ categories, products }, null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "terea-katalog-verileri.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Veriler indirildi");
+    });
+
+    menuBtn.addEventListener("click", () => {
+      navLinks.classList.toggle("show");
+    });
+
+    document.getElementById("contactForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const topic = document.getElementById("topic").value;
+      const message = document.getElementById("message").value.trim();
+      openWhatsApp(`Merhaba, benim adım ${name}. Telefonum: ${phone}. Konu: ${topic}. Mesaj: ${message}`);
+    });
+
+    document.getElementById("ageYes").addEventListener("click", () => {
+      localStorage.setItem("age_ok", "1");
+      ageModal.style.display = "none";
+    });
+
+    document.getElementById("ageNo").addEventListener("click", () => {
+      document.body.innerHTML = "<div style='min-height:100vh;display:grid;place-items:center;background:#050506;color:white;font-family:Arial;text-align:center;padding:20px'><h1>Bu sayfaya erişim için 18+ yaş doğrulaması gereklidir.</h1></div>";
+    });
+
+    if (localStorage.getItem("age_ok") === "1") {
+      ageModal.style.display = "none";
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
