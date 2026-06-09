@@ -1,0 +1,21 @@
+TEREA İzmir Katalog - Admin Panel Kullanımı
+
+1) Siteyi açmak için index.html dosyasını çift tıkla.
+2) Sağ üstteki "Admin Paneli" butonuna bas.
+3) Demo admin şifresi: 123456
+4) Admin panelinden:
+   - Kategori ekleyebilirsin.
+   - Kategori silebilirsin. Not: Kategoride ürün varsa önce o ürünleri silmen veya düzenlemen gerekir.
+   - Ürün ekleyebilirsin.
+   - Ürün düzenleyebilirsin.
+   - Ürün silebilirsin.
+   - Ürün görselini bilgisayardan JPG/PNG/WEBP olarak seçebilirsin.
+   - Ürün görselini ayrı olarak silebilirsin.
+   - Verileri JSON olarak dışa aktarabilirsin.
+
+Önemli:
+Bu proje tek dosyalık/demosal sistemdir. Ürünler ve görseller tarayıcı localStorage hafızasında saklanır.
+Başka tarayıcıda veya başka cihazda otomatik görünmez. Gerçek yayın için backend + veritabanı + dosya depolama gerekir.
+
+Güvenlik:
+Admin şifresi bu demo dosyada JavaScript içinde durur. Yayına alırken şifre sistemi sunucu taraflı yapılmalıdır.
